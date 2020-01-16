@@ -18,25 +18,27 @@ export default function MovieList() {
                     .then(res => res.json())
                     .then(res => {
                         setMovies(res.results)
+                        setIsloading(false)
                     })
             } catch (e) {
                 console.log(e)
             }
         }
         getMovies()
-        return () => {
-            setIsloading(false)
-        }
+        return () => {}
     }, [URL])
 
     return (
         <>
-            {isLoading && <h1>Loading...</h1>}
-            <MovieGrid>
-                {movies.map(movie => (
-                    <Movie key={movie.id} movie={movie} />
-                ))}
-            </MovieGrid>
+            {isLoading ? (
+                <h1>Loading...</h1>
+            ) : (
+                <MovieGrid>
+                    {movies.map(movie => (
+                        <Movie key={movie.id} movie={movie} />
+                    ))}
+                </MovieGrid>
+            )}
         </>
     )
 }

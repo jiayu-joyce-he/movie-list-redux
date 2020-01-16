@@ -1,37 +1,36 @@
 /** @format */
 
-/* eslint react/no-did-mount-set-state: 0 */
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Overdrive from 'react-overdrive'
 import { Poster } from './Movie'
+import axios from 'axios'
 
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w154'
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280'
 
-class MovieDetail extends Component {
-    state = {
-        movie: {}
-    }
+export default function MovieDetail({ match }) {
+    const [movie, setMovie] = useState({})
+    const [isLoading, setIsloading] = useState(true)
 
-    async componentDidMount() {
-        try {
-            const res = await fetch(
-                `https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=65e043c24785898be00b4abc12fcdaae&language=en-US`
-            )
-            const movie = await res.json()
-            this.setState({
-                movie
-            })
-        } catch (e) {
-            console.log(e)
+    const URL = `https://api.themoviedb.org/3/movie/${match.params.id}?api_key=8af2e71d16e6f0c56c4fc2459a322487&language=en-US`
+
+    useEffect(() => {
+        setIsloading(true)
+        axios.get(URL).then(({ data }) => {
+            setMovie(data)
+            setIsloading(false)
+        })
+        return () => {
+            console.log('clean up here')
         }
-    }
+    }, [URL])
 
-    render() {
-        const { movie } = this.state
+    // console.log('here movie', movie)
+    const movieInfo = () => {
         return (
             <MovieWrapper backdrop={`${BACKDROP_PATH}${movie.backdrop_path}`}>
+                {/* pass in backdrop data as a prop */}
                 <MovieInfo>
                     <Overdrive id={movie.id}>
                         <Poster
@@ -48,9 +47,9 @@ class MovieDetail extends Component {
             </MovieWrapper>
         )
     }
-}
 
-export default MovieDetail
+    return <>{isLoading ? <h1>Loading...</h1> : movieInfo()}</>
+}
 
 const MovieWrapper = styled.div`
     position: relative;
