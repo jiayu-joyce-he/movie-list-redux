@@ -21,7 +21,7 @@ export default function MovieList() {
                         setIsloading(false)
                     })
             } catch (e) {
-                console.log(e)
+                console.log('error', e)
             }
         }
         getMovies()

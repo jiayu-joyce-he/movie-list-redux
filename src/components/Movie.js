@@ -12,7 +12,7 @@ export default function Movie({ movie }) {
     // object deconstruct movie from the props
     return (
         <Link to={`/${movie.id}`}>
-            <Overdrive id={movie.id}>
+            <Overdrive id={String(movie.id)}>
                 <Poster
                     src={`${POSTER_PATH}${movie.poster_path}`}
                     alt={movie.title}
