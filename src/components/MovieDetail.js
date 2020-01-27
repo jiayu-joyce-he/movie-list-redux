@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Overdrive from 'react-overdrive'
 import { Poster } from './Movie'
-import axios from 'axios'
+// import axios from 'axios'
 import useAbortableFetch from 'use-abortable-fetch'
+import { useSpring, animated } from 'react-spring'
 
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w154'
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280'
@@ -14,10 +15,13 @@ export default function MovieDetail({ match }) {
     // const [movie, setMovie] = useState({})
     // const [isLoading, setIsloading] = useState(true)
     // Approach 1, using useAbortableFetch
-    const { data, loading } = useAbortableFetch(
+    const { data, loading, error, abort } = useAbortableFetch(
         `https://api.themoviedb.org/3/movie/${match.params.id}?api_key=8af2e71d16e6f0c56c4fc2459a322487&language=en-US`
     )
-    if (!data) return null
+
+    const animationProps = useSpring({ opacity: 1, from: { opacity: 0 } })
+
+    // if (!data) return null
 
     // Approach 2, using axios
     // const URL = `https://api.themoviedb.org/3/movie/${match.params.id}?api_key=8af2e71d16e6f0c56c4fc2459a322487&language=en-US`
@@ -44,17 +48,26 @@ export default function MovieDetail({ match }) {
                             alt={data.title}
                         />
                     </Overdrive>
-                    <div>
+                    <animated.div style={animationProps}>
                         <h1>{data.title}</h1>
                         <h3>{data.release_date}</h3>
                         <p>{data.overview}</p>
-                    </div>
+                    </animated.div>
                 </MovieInfo>
             </MovieWrapper>
         )
     }
 
-    return <>{loading ? <h1>Loading...</h1> : movieInfo()}</>
+    return <>{error ? <h1>Error: {error.message}</h1> : data && movieInfo()}</>
+    return (
+        <>
+            {loading ? (
+                <animated.h1 style={animationProps}>Loading...</animated.h1>
+            ) : (
+                data && movieInfo()
+            )}
+        </>
+    )
 }
 
 const MovieWrapper = styled.div`
