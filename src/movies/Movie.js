@@ -18,9 +18,6 @@ export default function Movie({ movie }) {
                     alt={movie.title}
                 />
             </Overdrive>
-            {/* <p>{movie.overview}</p>
-            <p>Average Votes: {movie.popularity}</p>
-            <p>Released on: {movie.release_date}</p> */}
         </Link>
     )
 }

@@ -5,19 +5,23 @@ import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import logo from './logo.svg'
 import './App.css'
-import NotesButton from './components/NotesButton'
-import MovieList from './components/MovieList'
-import MovieDetail from './components/MovieDetail'
-import Toggle from './components/Toggle'
+import NotesButton from './movies/NotesButton'
+import MovieList from './movies/MovieList'
+import MovieDetail from './movies/MovieDetail'
+import Toggle from './toggle/Toggle'
 
 import rootReducer from './rootReducer'
-import { createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import { logger } from 'redux-logger'
+import ReduxThunk from 'redux-thunk'
+
+const middleware = [logger, ReduxThunk] // an array of middleware
 
 const store = createStore(
     rootReducer,
     {}, //initial state
-    composeWithDevTools() //with middlewares
+    composeWithDevTools(applyMiddleware(...middleware)) //with middlewares; applyMiddleware accepts different middleware
 )
 
 class App extends Component {

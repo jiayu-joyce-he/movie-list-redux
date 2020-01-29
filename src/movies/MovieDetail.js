@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Overdrive from 'react-overdrive'
 import { Poster } from './Movie'
@@ -15,7 +15,7 @@ export default function MovieDetail({ match }) {
     // const [movie, setMovie] = useState({})
     // const [isLoading, setIsloading] = useState(true)
     // Approach 1, using useAbortableFetch
-    const { data, loading, error, abort } = useAbortableFetch(
+    const { data, loading, error } = useAbortableFetch(
         `https://api.themoviedb.org/3/movie/${match.params.id}?api_key=8af2e71d16e6f0c56c4fc2459a322487&language=en-US`
     )
 
@@ -58,11 +58,12 @@ export default function MovieDetail({ match }) {
         )
     }
 
-    return <>{error ? <h1>Error: {error.message}</h1> : data && movieInfo()}</>
     return (
         <>
-            {loading ? (
-                <animated.h1 style={animationProps}>Loading...</animated.h1>
+            {error ? (
+                <h1>Error: {error.message}</h1>
+            ) : loading ? (
+                <h1>Loading...</h1>
             ) : (
                 data && movieInfo()
             )}
