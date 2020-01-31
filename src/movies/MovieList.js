@@ -30,15 +30,15 @@ function MovieList(props) {
     //     return () => {}
     // }, [URL])
 
-    const { movies, getMovies } = props
+    const { movies, moviesLoaded, getMovies } = props
 
     useEffect(() => {
-        movies.length === 0 && getMovies()
-    }, [])
+        !moviesLoaded && getMovies()
+    }, [moviesLoaded, getMovies])
 
     return (
         <>
-            {movies.length === 0 ? (
+            {!moviesLoaded ? (
                 <h1>Loading...</h1>
             ) : (
                 <MovieGrid>
@@ -52,7 +52,8 @@ function MovieList(props) {
 }
 
 const mapStateToProps = state => ({
-    movies: state.movies.movies
+    movies: state.movies.movies,
+    moviesLoaded: state.movies.moviesLoaded
 })
 
 const mapDispatchToProps = dispatch =>
