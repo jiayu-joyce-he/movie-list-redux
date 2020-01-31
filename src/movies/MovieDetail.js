@@ -1,6 +1,6 @@
 /** @format */
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Overdrive from 'react-overdrive'
 import { Poster } from './Movie'
@@ -8,16 +8,19 @@ import { Poster } from './Movie'
 import useAbortableFetch from 'use-abortable-fetch'
 import { useSpring, animated } from 'react-spring'
 
+import { bindActionCreators } from 'redux'
+import { getMovie, resetMovie } from './actions'
+import { connect } from 'react-redux'
+
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w154'
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280'
 
-export default function MovieDetail({ match }) {
-    // const [movie, setMovie] = useState({})
+function MovieDetail({ match, getMovie, resetMovie, data, movieLoaded }) {
     // const [isLoading, setIsloading] = useState(true)
     // Approach 1, using useAbortableFetch
-    const { data, loading, error } = useAbortableFetch(
-        `https://api.themoviedb.org/3/movie/${match.params.id}?api_key=8af2e71d16e6f0c56c4fc2459a322487&language=en-US`
-    )
+    // const { data, loading, error } = useAbortableFetch(
+    //     `https://api.themoviedb.org/3/movie/${match.params.id}?api_key=8af2e71d16e6f0c56c4fc2459a322487&language=en-US`
+    // )
 
     const animationProps = useSpring({ opacity: 1, from: { opacity: 0 } })
 
@@ -36,6 +39,14 @@ export default function MovieDetail({ match }) {
     //         console.log('clean up here')
     //     }
     // }, [URL])
+
+    // Approach 3, use redux
+    useEffect(() => {
+        !movieLoaded && getMovie(match.params.id)
+        return () => {
+            resetMovie() //clean up
+        }
+    }, [match.params.id])
 
     const movieInfo = () => {
         return (
@@ -60,16 +71,26 @@ export default function MovieDetail({ match }) {
 
     return (
         <>
-            {error ? (
+            {/* {error ? (
                 <h1>Error: {error.message}</h1>
             ) : loading ? (
                 <h1>Loading...</h1>
             ) : (
                 data && movieInfo()
-            )}
+            )} */}
+            {!movieLoaded ? <h1>Loading...</h1> : movieInfo()}
         </>
     )
 }
+
+const mapStateToProps = state => ({
+    data: state.movies.movie,
+    movieLoaded: state.movies.movieLoaded
+})
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({ getMovie, resetMovie }, dispatch)
+export default connect(mapStateToProps, mapDispatchToProps)(MovieDetail)
 
 const MovieWrapper = styled.div`
     position: relative;
