@@ -15,13 +15,14 @@ import { applyMiddleware, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { logger } from 'redux-logger'
 import ReduxThunk from 'redux-thunk'
+import { save, load } from 'redux-localstorage-simple'
 
 const middleware = [logger, ReduxThunk] // an array of middleware
 
 const store = createStore(
     rootReducer,
-    {}, //initial state
-    composeWithDevTools(applyMiddleware(...middleware)) //with middlewares; applyMiddleware accepts different middleware
+    load(), //use {} to input initial state
+    composeWithDevTools(applyMiddleware(...middleware, save())) //with middlewares; applyMiddleware accepts different middleware
 )
 
 class App extends Component {

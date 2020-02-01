@@ -30,10 +30,13 @@ function MovieList(props) {
     //     return () => {}
     // }, [URL])
 
-    const { movies, moviesLoaded, getMovies } = props
+    const { movies, moviesLoaded, getMovies, moviesLoadedAt } = props
 
     useEffect(() => {
-        !moviesLoaded && getMovies()
+        const oneHour = 60 * 60 * 1000
+        // will update local storage if over 1 hr
+        ;(!moviesLoaded || new Date() - new Date(moviesLoadedAt) > oneHour) &&
+            getMovies()
     }, [moviesLoaded, getMovies])
 
     return (
@@ -53,7 +56,8 @@ function MovieList(props) {
 
 const mapStateToProps = state => ({
     movies: state.movies.movies,
-    moviesLoaded: state.movies.moviesLoaded
+    moviesLoaded: state.movies.moviesLoaded,
+    moviesLoadedAt: state.movies.moviesLoadedAt
 })
 
 const mapDispatchToProps = dispatch =>
